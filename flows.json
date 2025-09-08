@@ -1,0 +1,71 @@
+[
+  {
+    "id": "professionalTerfiSystem",
+    "type": "tab",
+    "label": "\ud83c\udfeb Profesyonel Terfi Sistemi",
+    "disabled": false,
+    "info": "\u2705 T\u00fcm \u00d6zellikler | \u2705 Detayl\u0131 Y\u00f6netim | \u2705 Profesyonel Raporlama | \u2705 Geli\u015fmi\u015f Telegram"
+  },
+  {
+    "id": "systemBoot",
+    "type": "inject",
+    "z": "professionalTerfiSystem",
+    "name": "\ud83d\ude80 Sistem Ba\u015flang\u0131c\u0131",
+    "props": [{"p": "payload"}],
+    "once": true,
+    "onceDelay": "0.2",
+    "x": 120,
+    "y": 60,
+    "wires": [["initDefaults"]]
+  },
+  {
+    "id": "initDefaults",
+    "type": "function",
+    "z": "professionalTerfiSystem",
+    "name": "\ud83d\udce6 Sistem Ayarlar\u0131",
+    "func": "// Sistem genel ayarları\nglobal.set('systemName', 'Profesyonel Terfi Y\u00f6netimi', 'file');\nglobal.set('systemLocation', 'Ana Tesis', 'file');\nglobal.set('language', 'tr', 'file');\n\n// Örnek istasyon bilgileri\nconst stations = {\n  istasyon1: {\n    id: 'istasyon1',\n    name: 'Terfi İstasyonu 1',\n    motors: [{ id: 'motor1', name: 'Ana Motor', enabled: true }]\n  }\n};\nglobal.set('stations', stations, 'file');\n\nreturn null;",
+    "outputs": 1,
+    "x": 360,
+    "y": 60,
+    "wires": [[]]
+  },
+  {
+    "id": "stationMonitoringLoop",
+    "type": "inject",
+    "z": "professionalTerfiSystem",
+    "name": "\u23f1\ufe0f \u0130zleme D\u00f6ng\u00fcs\u00fc",
+    "props": [{"p": "payload"}],
+    "repeat": "5",
+    "once": true,
+    "onceDelay": "1",
+    "x": 120,
+    "y": 140,
+    "wires": [["monitorAllStations"]]
+  },
+  {
+    "id": "monitorAllStations",
+    "type": "function",
+    "z": "professionalTerfiSystem",
+    "name": "\ud83d\udd0d \u00d6rnek \u0130zleme",
+    "func": "const stations = global.get('stations') || {};\nconst now = Date.now();\nconst results = [];\n\nfor (const [id, st] of Object.entries(stations)) {\n  const level = Math.random() * 3 + 3;\n  const motorRunning = Math.random() > 0.5;\n  results.push({ stationId: id, level, motorRunning, timestamp: now });\n}\n\nmsg.payload = results;\nreturn msg;",
+    "outputs": 1,
+    "x": 360,
+    "y": 140,
+    "wires": [["debugMonitor"]]
+  },
+  {
+    "id": "debugMonitor",
+    "type": "debug",
+    "z": "professionalTerfiSystem",
+    "name": "log",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "x": 540,
+    "y": 140,
+    "wires": []
+  }
+]
